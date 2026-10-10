@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Biblioteca · Catálogo</title>
+<style>
+:root{--bg:#f7f2ea;--card:#fffdf9;--ink:#26211c;--muted:#7a6f63;--accent:#9a3412;--accent2:#c2410c;--line:#e8dfd2;--gold:#d9a21b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+.hero{background:linear-gradient(135deg,#3b1d0e,#7c2d12 60%,#b45309);color:#fff7ed;padding:56px 24px 76px;text-align:center}
+.hero h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(2rem,5vw,3.2rem);margin:0 0 8px;letter-spacing:.5px}
+.hero p{margin:0;opacity:.85}
+.stats{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.stat{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:12px 24px;min-width:120px}
+.stat b{display:block;font-size:1.8rem;font-family:Georgia,serif}
+.stat span{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;opacity:.8}
+main{max-width:1100px;margin:-38px auto 40px;padding:0 20px}
+section{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;margin-bottom:24px;box-shadow:0 8px 24px rgba(60,30,10,.06)}
+h2{font-family:Georgia,serif;margin:0;font-size:1.5rem}
+.head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.pill{display:inline-block;padding:4px 12px;border-radius:999px;font-size:.78rem;font-weight:600;margin-right:6px}
+.pill.cache{background:#dcfce7;color:#166534}
+.pill.base_de_datos{background:#fef3c7;color:#92400e}
+.rank{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.rank-item{display:flex;gap:12px;align-items:center;padding:14px;border:1px solid var(--line);border-radius:14px;cursor:pointer;background:#fff;transition:.15s}
+.rank-item:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(60,30,10,.1)}
+.pos{width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-family:Georgia,serif;font-weight:700;flex:none}
+.rank-item h4{margin:0;font-size:.95rem;line-height:1.25}
+.rank-item small{color:var(--muted)}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+input,select{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+#buscar{flex:1;min-width:200px}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:10px 16px;background:var(--accent);color:#fff;font-weight:600}
+button:hover{background:var(--accent2)}
+button.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+button.ghost:hover{background:#f3e8dc}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:24px}
+.book{cursor:pointer;transition:.15s}
+.book:hover{transform:translateY(-4px)}
+.cover{aspect-ratio:2/3;border-radius:10px;overflow:hidden;box-shadow:0 8px 18px rgba(60,30,10,.25);background:#ddd}
+.cover img{width:100%;height:100%;object-fit:cover;display:block}
+.ph{width:100%;height:100%;display:grid;place-items:center;background:linear-gradient(160deg,hsl(var(--h),45%,40%),hsl(var(--h),50%,20%))}
+.ph span{font-family:Georgia,serif;font-size:4rem;color:rgba(255,255,255,.85)}
+.info h3{font-family:Georgia,serif;font-size:1rem;margin:10px 0 2px;line-height:1.25}
+.autor{margin:0;color:var(--muted);font-size:.85rem}
+.meta{margin:4px 0;font-size:.8rem;color:var(--muted)}
+.tag{background:#f3e8dc;color:var(--accent);padding:2px 8px;border-radius:999px;font-size:.72rem;font-weight:600}
+.stars{margin:2px 0 0;color:var(--gold);letter-spacing:1px}
+.stars small{color:var(--muted);letter-spacing:0}
+.muted{color:var(--muted);font-size:.85rem}
+dialog{border:0;border-radius:20px;padding:0;max-width:720px;width:92%;background:var(--card);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(30,15,5,.6);backdrop-filter:blur(3px)}
+.modal{padding:26px;position:relative}
+.close{position:absolute;top:12px;right:12px;background:#f3e8dc;color:var(--accent);width:36px;height:36px;padding:0;border-radius:50%;font-size:1.3rem}
+.detail{display:flex;gap:22px;flex-wrap:wrap}
+.detail .cover{width:170px;flex:none}
+.detail h2{margin-bottom:4px}
+.modal h3{font-family:Georgia,serif;margin:22px 0 6px}
+.resena{border-top:1px solid var(--line);padding:10px 0}
+.resena p{margin:2px 0 0}
+form.nueva{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+form.nueva input[type=text]{flex:1;min-width:160px}
+#msg{min-height:1.2em;font-size:.85rem;margin:8px 0 0}
+#msg.error{color:#b91c1c}
+#msg.ok{color:#166534}
+footer{text-align:center;color:var(--muted);font-size:.8rem;padding-bottom:30px}
+</style>
+</head>
+<body>
+<header class="hero">
+  <h1>Biblioteca</h1>
+  <p>Catálogo de autores, libros y reseñas</p>
+  <div class="stats">
+    <div class="stat"><b id="n-libros">0</b><span>Libros</span></div>
+    <div class="stat"><b id="n-autores">0</b><span>Autores</span></div>
+    <div class="stat"><b id="n-reviews">0</b><span>Reseñas</span></div>
+  </div>
+</header>
+<main>
+  <section>
+    <div class="head">
+      <h2>Los mejor calificados</h2>
+      <div><span id="origen" class="pill"></span><button class="ghost" id="refrescar">Actualizar</button></div>
+    </div>
+    <div id="ranking" class="rank"></div>
+  </section>
+  <section>
+    <div class="head"><h2>Catálogo</h2></div>
+    <div class="tools">
+      <input id="buscar" type="search" placeholder="Buscar por título o autor...">
+      <select id="genero"></select>
+    </div>
+    <div id="grid" class="grid"></div>
+  </section>
+</main>
+<footer>Biblioteca API · FastAPI + SQLModel + Redis</footer>
+<dialog id="dlg">
+  <div class="modal">
+    <button class="close" id="cerrar" aria-label="Cerrar">&times;</button>
+    <div id="modal-body"></div>
+  </div>
+</dialog>
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const estrellas = (n) => '\u2605'.repeat(Math.round(n)) + '\u2606'.repeat(5 - Math.round(n));
+let libros = [], autores = {}, reviews = [];
+const dlg = $('#dlg');
+
+async function api(url, opts) {
+  const r = await fetch(url, opts);
+  if (!r.ok) {
+    let msg = 'Error ' + r.status;
+    try { const d = await r.json(); msg = typeof d.detail === 'string' ? d.detail : 'Datos inválidos'; } catch (e) {}
+    throw new Error(msg);
+  }
+  return r.status === 204 ? null : r.json();
+}
+
+function promedio(id) {
+  const rs = reviews.filter((x) => x.libro_id === id);
+  if (!rs.length) return null;
+  return rs.reduce((s, x) => s + x.calificacion, 0) / rs.length;
+}
+
+function portadaHtml(l) {
+  if (l.portada) return `<img src="${esc(l.portada)}" alt="Portada de ${esc(l.titulo)}">`;
+  const hue = (l.id * 47) % 360;
+  return `<div class="ph" style="--h:${hue}"><span>${esc(l.titulo.charAt(0).toUpperCase())}</span></div>`;
+}
+
+function tarjeta(l) {
+  const a = autores[l.autor_id];
+  const p = promedio(l.id);
+  const rating = p === null ? '<span class="muted">Sin reseñas</span>' : estrellas(p) + ' <small>' + p.toFixed(1) + '</small>';
+  return `<article class="book" data-id="${l.id}">
+    <div class="cover">${portadaHtml(l)}</div>
+    <div class="info">
+      <h3>${esc(l.titulo)}</h3>
+      <p class="autor">${esc(a ? a.nombre : 'Autor desconocido')}</p>
+      <p class="meta"><span class="tag">${esc(l.genero)}</span> ${l.anio}</p>
+      <p class="stars">${rating}</p>
+    </div>
+  </article>`;
+}
+
+function renderRanking(data) {
+  const o = $('#origen');
+  o.textContent = data.origen === 'cache' ? 'Servido desde caché Redis' : 'Calculado en la base de datos';
+  o.className = 'pill ' + data.origen;
+  $('#ranking').innerHTML = data.ranking.length
+    ? data.ranking.map((r, i) => `<div class="rank-item" data-id="${r.id}">
+        <div class="pos">${i + 1}</div>
+        <div><h4>${esc(r.titulo)}</h4>
+        <span class="stars">${estrellas(r.promedio)}</span><br>
+        <small>${r.promedio.toFixed(1)} · ${r.total_reviews} reseña(s)</small></div>
+      </div>`).join('')
+    : '<p class="muted">Aún no hay reseñas para armar el ranking.</p>';
+}
+
+function llenarGeneros() {
+  const sel = $('#genero');
+  const actual = sel.value;
+  const gs = [...new Set(libros.map((l) => l.genero))].sort();
+  sel.innerHTML = '<option value="">Todos los géneros</option>' + gs.map((g) => `<option>${esc(g)}</option>`).join('');
+  sel.value = gs.includes(actual) ? actual : '';
+}
+
+function aplicarFiltros() {
+  const q = $('#buscar').value.trim().toLowerCase();
+  const g = $('#genero').value;
+  const lista = libros.filter((l) =>
+    (!g || l.genero === g) &&
+    (!q || l.titulo.toLowerCase().includes(q) || (autores[l.autor_id]?.nombre || '').toLowerCase().includes(q))
+  );
+  $('#grid').innerHTML = lista.length ? lista.map(tarjeta).join('') : '<p class="muted">No hay libros que coincidan.</p>';
+}
+
+async function cargar() {
+  const [l, a, r, rk] = await Promise.all([
+    api('/libros/?limit=100'),
+    api('/autores/'),
+    api('/reviews/?limit=100'),
+    api('/libros/ranking?limite=5'),
+  ]);
+  libros = l;
+  autores = Object.fromEntries(a.map((x) => [x.id, x]));
+  reviews = r;
+  $('#n-libros').textContent = l.length;
+  $('#n-autores').textContent = a.length;
+  $('#n-reviews').textContent = r.length;
+  llenarGeneros();
+  renderRanking(rk);
+  aplicarFiltros();
+}
+
+function aviso(texto, error) {
+  const m = $('#msg');
+  if (!m) return;
+  m.textContent = texto;
+  m.className = error ? 'error' : 'ok';
+}
+
+function abrir(id) {
+  const l = libros.find((x) => x.id === id);
+  if (!l) return;
+  const a = autores[l.autor_id];
+  const rs = reviews.filter((x) => x.libro_id === id);
+  const p = promedio(id);
+  const lista = rs.length
+    ? rs.map((x) => `<div class="resena"><span class="stars">${estrellas(x.calificacion)}</span><p>${esc(x.comentario || 'Sin comentario')}</p></div>`).join('')
+    : '<p class="muted">Sé el primero en reseñar este libro.</p>';
+  const rating = p === null ? '<span class="muted">Sin reseñas todavía</span>' : estrellas(p) + ' <small>' + p.toFixed(1) + ' (' + rs.length + ')</small>';
+  $('#modal-body').innerHTML = `
+    <div class="detail">
+      <div class="cover">${portadaHtml(l)}</div>
+      <div style="flex:1;min-width:220px">
+        <h2>${esc(l.titulo)}</h2>
+        <p class="autor">${esc(a ? a.nombre : 'Autor desconocido')}${a ? ' · ' + esc(a.pais) : ''}</p>
+        <p class="meta"><span class="tag">${esc(l.genero)}</span> ${l.anio}</p>
+        <p class="stars">${rating}</p>
+        ${a && a.biografia ? '<p class="muted">' + esc(a.biografia) + '</p>' : ''}
+        <input type="file" id="file" accept="image/png,image/jpeg,image/webp" hidden>
+        <button type="button" class="ghost" id="btn-portada">Cambiar portada</button>
+      </div>
+    </div>
+    <h3>Reseñas</h3>
+    ${lista}
+    <form id="form-review" class="nueva">
+      <select id="cal">
+        <option value="5">5 &#9733;</option><option value="4">4 &#9733;</option>
+        <option value="3">3 &#9733;</option><option value="2">2 &#9733;</option>
+        <option value="1">1 &#9733;</option>
+      </select>
+      <input type="text" id="com" maxlength="500" placeholder="Escribe tu reseña...">
+      <button type="submit">Publicar</button>
+    </form>
+    <p id="msg"></p>`;
+
+  $('#btn-portada').onclick = () => $('#file').click();
+  $('#file').onchange = async (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const fd = new FormData();
+    fd.append('archivo', f);
+    try {
+      await api('/libros/' + id + '/portada', { method: 'POST', body: fd });
+      await cargar();
+      abrir(id);
+      aviso('Portada actualizada', false);
+    } catch (err) { aviso(err.message, true); }
+  };
+  $('#form-review').onsubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await api('/reviews/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ calificacion: Number($('#cal').value), comentario: $('#com').value || null, libro_id: id }),
+      });
+      await cargar();
+      abrir(id);
+      aviso('Reseña publicada', false);
+    } catch (err) { aviso(err.message, true); }
+  };
+  if (!dlg.open) dlg.showModal();
+}
+
+$('#grid').addEventListener('click', (e) => { const c = e.target.closest('.book'); if (c) abrir(Number(c.dataset.id)); });
+$('#ranking').addEventListener('click', (e) => { const c = e.target.closest('.rank-item'); if (c) abrir(Number(c.dataset.id)); });
+$('#buscar').addEventListener('input', aplicarFiltros);
+$('#genero').addEventListener('change', aplicarFiltros);
+$('#refrescar').addEventListener('click', () => cargar());
+$('#cerrar').addEventListener('click', () => dlg.close());
+dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+
+cargar().catch(() => { $('#grid').innerHTML = '<p class="muted">No se pudo conectar con la API.</p>'; });
+</script>
+</body>
+</html>
